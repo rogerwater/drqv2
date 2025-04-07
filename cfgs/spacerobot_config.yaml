@@ -1,0 +1,48 @@
+defaults:
+  - _self_
+  - override hydra/launcher: submitit_local
+
+# 任务设置
+task_name: spacerobot
+frame_stack: 3
+action_repeat: 2
+discount: 0.99
+# 训练设置
+num_seed_frames: 4000
+num_train_frames: 1000000
+# 评估设置
+eval_every_frames: 10000
+num_eval_episodes: 10
+# 快照设置
+save_snapshot: true
+# 回放缓冲区
+replay_buffer_size: 1000000
+replay_buffer_num_workers: 4
+nstep: 3
+batch_size: 256
+# 杂项
+seed: 1
+device: cuda
+save_video: true
+save_train_video: false
+use_tb: true
+# 实验名称
+experiment: spacerobot_exp
+# 智能体参数
+lr: 1e-4
+feature_dim: 50
+
+agent:
+  _target_: drqv2.drqv2.DrQV2Agent
+  obs_shape: ??? # 运行时填充
+  action_shape: ??? # 运行时填充
+  device: ${device}
+  lr: ${lr}
+  feature_dim: ${feature_dim}
+  hidden_dim: 1024
+  critic_target_tau: 0.01
+  num_expl_steps: 2000
+  update_every_steps: 2
+  stddev_schedule: 'linear(1.0,0.1,50000)'
+  stddev_clip: 0.3
+  use_tb: ${use_tb}
